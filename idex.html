@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BLACKOUT: Упадок Soundcloud</title>
+    <title>SLOEE?: Упадок</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -887,7 +887,7 @@
         <h1 class="victory-title">ПОБЕДА?</h1>
         <p class="victory-text">
             Ты достиг вершины, но что это изменило?<br>
-            Soundcloud мертв, твоя музыка забыта, а ты остался один на один с пустотой.<br>
+            ТЫ уже мертв внутри, твоя музыка забыта. Один на один с пустотой.<br>
             Поздравляю, ты выиграл. Или проиграл?
         </p>
         <button class="victory-button" id="victoryButton">Начать заново</button>
@@ -950,7 +950,7 @@
                     { 
                         id: 'single', 
                         name: 'Сингл', 
-                        description: 'Первый официальный релиз. 3 прослушивания - твоя мама и два ботах.',
+                        description: 'Первый официальный релиз. 20 подписчиков в телеграм канале. Успех? ',
                         basePrice: 100, 
                         baseCps: 0.5, 
                         owned: 0,
@@ -970,7 +970,7 @@
                     { 
                         id: 'album', 
                         name: 'Альбом', 
-                        description: 'Полноценная работа, которую никто не оценил. Время плакать в подушку.',
+                        description: 'Полноценная работа, которую никто не оценил. Далеко не в последний раз.',
                         basePrice: 3000, 
                         baseCps: 10, 
                         owned: 0,
@@ -980,7 +980,7 @@
                     { 
                         id: 'collab', 
                         name: 'Коллаб', 
-                        description: 'Сотрудничество с более успешным артистом. Он даже не ответил тебе.',
+                        description: 'Сотрудничество с более успешным артистом. Тебя использовали.',
                         basePrice: 10000, 
                         baseCps: 40, 
                         owned: 0,
@@ -1090,7 +1090,7 @@
                     { 
                         id: 'critics', 
                         name: 'Хайп', 
-                        description: 'Альбомы x2. Критики хвалят, но внутри только пустота. Ты больше не чувствуешь музыку.',
+                        description: 'Альбомы x2. Критики хвалят, но внутри ничего... Ты больше не чувствуешь музыку.',
                         price: 100000, 
                         effect: () => { 
                             this.getProducer('album').baseCps *= 2;
@@ -1116,7 +1116,7 @@
                     { 
                         id: 'empty', 
                         name: 'Пустота', 
-                        description: 'Клики x3. Когда творчество больше не приносит радости. Это конец.',
+                        description: 'Клики x3. Творчество больше не приносит радости. Это конец.',
                         price: 2000000, 
                         effect: () => { 
                             this.clickPower *= 3;
@@ -1175,7 +1175,7 @@
                         id: 'empty', 
                         name: 'Пустота', 
                         description: '10,000,000 прослушиваний', 
-                        reward: 'Клики x3. Ты достиг вершины, но там никого нет.', 
+                        reward: 'Клики x3. Ты достиг вершины айсберга. Шутка. Ты в самом низу айсберга. Где-то между NULL и VOID. .', 
                         condition: () => this.totalCookies >= 10000000, 
                         unlocked: false, 
                         effect: () => { 
@@ -1363,7 +1363,7 @@
                     this.currentCollapseSpeed = this.baseCollapseSpeed * (1 + this.inactivityTimer / 10);
                     
                     if (this.inactivityTimer > 30 && Math.random() < 0.1) {
-                        this.addEvent("Ты давно не был активен. Пустота заполняет тебя...");
+                        this.addEvent("Время идет. А ты даже не попал в рекомендации ВК.");
                     }
                 } else {
                     this.currentCollapseSpeed = this.baseCollapseSpeed;
@@ -1833,4 +1833,5 @@
         document.body.appendChild(resetButton);
     </script>
 </body>
+
 </html>
