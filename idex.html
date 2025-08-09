@@ -1,0 +1,1836 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BLACKOUT: Упадок Soundcloud</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1a1a1a;
+            --secondary: #2d2d2d;
+            --accent: #8b0000;
+            --accent-dark: #5a0000;
+            --text: #cccccc;
+            --text-dim: #888888;
+            --bg: #0a0a0a;
+            --card-bg: rgba(15, 15, 15, 0.7);
+            --highlight: #8b0000;
+            --corruption: #8b0000;
+            --blood: #8b0000;
+            --blood-dark: #5a0000;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+            min-height: 100vh;
+            perspective: 1000px;
+            line-height: 1.6;
+            transition: all 1s ease;
+        }
+        
+        body.white-theme {
+            --primary: #ffffff;
+            --secondary: #f0f0f0;
+            --accent: #8b0000;
+            --accent-dark: #5a0000;
+            --text: #333333;
+            --text-dim: #666666;
+            --bg: #f5f5f5;
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --highlight: #8b0000;
+            --corruption: #8b0000;
+        }
+        
+        .parallax-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(139, 0, 0, 0.05) 0%, transparent 25%),
+                radial-gradient(circle at 80% 70%, rgba(139, 0, 0, 0.05) 0%, transparent 25%),
+                linear-gradient(to bottom, #000000, #0a0a0a);
+            transform-style: preserve-3d;
+            transition: all 1s ease;
+        }
+        
+        .white-theme .parallax-bg {
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(139, 0, 0, 0.05) 0%, transparent 25%),
+                radial-gradient(circle at 80% 70%, rgba(139, 0, 0, 0.05) 0%, transparent 25%),
+                linear-gradient(to bottom, #f5f5f5, #e0e0e0);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        header {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+        }
+        
+        .white-theme header {
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        header::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            opacity: 0.2;
+        }
+        
+        h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 2.2rem;
+            color: var(--text);
+            text-shadow: 0 0 10px rgba(139, 0, 0, 0.5);
+            letter-spacing: 1px;
+        }
+        
+        .stats {
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(5px);
+            position: relative;
+            overflow: hidden;
+            transition: all 1s ease;
+        }
+        
+        .white-theme .stats {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .main-clicker {
+            text-align: center;
+            margin: 20px 0 30px;
+            position: relative;
+        }
+        
+        .clicker-btn {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--primary), var(--secondary));
+            border: 2px solid var(--accent);
+            color: var(--text);
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 
+                0 0 20px rgba(139, 0, 0, 0.3),
+                inset 0 0 10px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+        }
+        
+        .white-theme .clicker-btn {
+            box-shadow: 
+                0 0 20px rgba(139, 0, 0, 0.2),
+                inset 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .clicker-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 
+                0 0 30px rgba(139, 0, 0, 0.5),
+                inset 0 0 15px rgba(0, 0, 0, 0.7);
+        }
+        
+        .clicker-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .clicker-btn::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(139, 0, 0, 0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .clicker-btn:hover::before {
+            opacity: 1;
+        }
+        
+        .cookie-count {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 15px 0;
+            color: var(--text);
+            text-shadow: 0 0 10px rgba(139, 0, 0, 0.5);
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        .cps {
+            font-size: 1.1rem;
+            color: var(--accent);
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+        
+        .tab-container {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .white-theme .tab-container {
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            background: transparent;
+            border: none;
+            color: var(--text-dim);
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s;
+        }
+        
+        .tab:hover {
+            color: var(--text);
+        }
+        
+        .tab.active {
+            color: var(--text);
+        }
+        
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--accent);
+        }
+        
+        .section {
+            display: none;
+        }
+        
+        .section.active {
+            display: block;
+        }
+        
+        .producer {
+            background: rgba(20, 20, 20, 0.6);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .white-theme .producer {
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .producer:hover {
+            background: rgba(30, 30, 30, 0.6);
+            border-color: rgba(139, 0, 0, 0.3);
+        }
+        
+        .white-theme .producer:hover {
+            background: rgba(240, 240, 240, 0.6);
+        }
+        
+        .producer.unlocked {
+            opacity: 1;
+        }
+        
+        .producer.locked {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        
+        .producer-name {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .producer-count {
+            color: var(--accent);
+        }
+        
+        .producer-description {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            margin-bottom: 10px;
+        }
+        
+        .producer-price {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+        }
+        
+        .producer-button {
+            background: linear-gradient(to bottom, var(--accent), var(--accent-dark));
+            border: none;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .producer-button:hover {
+            background: linear-gradient(to bottom, var(--accent-dark), var(--accent));
+            transform: translateY(-2px);
+        }
+        
+        .producer-button:disabled {
+            background: var(--secondary);
+            color: var(--text-dim);
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .white-theme .producer-button:disabled {
+            background: var(--secondary);
+            color: var(--text-dim);
+        }
+        
+        .upgrades-section {
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            max-height: 500px;
+            overflow-y: auto;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .white-theme .upgrades-section {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .upgrade {
+            background: rgba(20, 20, 20, 0.6);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s;
+        }
+        
+        .white-theme .upgrade {
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .upgrade:hover {
+            background: rgba(30, 30, 30, 0.6);
+            border-color: rgba(139, 0, 0, 0.3);
+        }
+        
+        .white-theme .upgrade:hover {
+            background: rgba(240, 240, 240, 0.6);
+        }
+        
+        .upgrade.unlocked {
+            opacity: 1;
+        }
+        
+        .upgrade.locked {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        
+        .upgrade-name {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .upgrade-description {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            margin-bottom: 10px;
+        }
+        
+        .upgrade-price {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+        }
+        
+        .upgrade-button {
+            background: linear-gradient(to bottom, var(--accent), var(--accent-dark));
+            border: none;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .upgrade-button:hover {
+            background: linear-gradient(to bottom, var(--accent-dark), var(--accent));
+            transform: translateY(-2px);
+        }
+        
+        .upgrade-button:disabled {
+            background: var(--secondary);
+            color: var(--text-dim);
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .white-theme .upgrade-button:disabled {
+            background: var(--secondary);
+            color: var(--text-dim);
+        }
+        
+        .achievement {
+            background: rgba(20, 20, 20, 0.6);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s;
+        }
+        
+        .white-theme .achievement {
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .achievement.unlocked {
+            border-color: var(--accent);
+            background: rgba(139, 0, 0, 0.1);
+        }
+        
+        .achievement.locked {
+            opacity: 0.6;
+        }
+        
+        .achievement-name {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .achievement-name .locked {
+            color: var(--text-dim);
+        }
+        
+        .achievement-name .unlocked {
+            color: var(--accent);
+        }
+        
+        .achievement-description {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            margin-bottom: 5px;
+        }
+        
+        .achievement-reward {
+            font-size: 0.85rem;
+            color: var(--accent);
+            font-style: italic;
+        }
+        
+        /* Анимации */
+        @keyframes flicker {
+            0% { opacity: 0.8; }
+            50% { opacity: 0.6; }
+            100% { opacity: 0.8; }
+        }
+        
+        .flicker {
+            animation: flicker 3s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+        
+        .pulse {
+            animation: pulse 5s infinite;
+        }
+        
+        @keyframes corruption {
+            0% { text-shadow: 0 0 5px var(--corruption); }
+            50% { text-shadow: 0 0 10px var(--corruption); }
+            100% { text-shadow: 0 0 5px var(--corruption); }
+        }
+        
+        .corruption {
+            animation: corruption 3s infinite;
+        }
+        
+        /* Параллакс-эффект */
+        .parallax-layer {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-repeat: no-repeat;
+            background-position: center;
+            will-change: transform;
+        }
+        
+        .layer-1 {
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><path d="M30,50 Q50,30 70,50 T90,50" stroke="rgba(139,0,0,0.1)" fill="none" stroke-width="1"/></svg>');
+            transform: translateZ(-300px) scale(4);
+        }
+        
+        .layer-2 {
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><circle cx="100" cy="100" r="30" fill="none" stroke="rgba(139,0,0,0.1)" stroke-width="1"/></svg>');
+            transform: translateZ(-200px) scale(3);
+        }
+        
+        /* Стили для сайдбара */
+        .upgrades-section h3 {
+            margin-bottom: 15px;
+            font-family: 'Montserrat', sans-serif;
+            color: var(--accent);
+            font-size: 1.1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 5px;
+        }
+        
+        .white-theme .upgrades-section h3 {
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .stat-item {
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .stat-label {
+            opacity: 0.8;
+        }
+        
+        .stat-value {
+            font-weight: 600;
+        }
+        
+        #eventLog {
+            font-size: 0.85rem;
+            max-height: 200px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+        
+        .event {
+            padding: 8px 0;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+            animation: fadeIn 0.5s;
+        }
+        
+        .white-theme .event {
+            border-bottom: 1px dashed rgba(0, 0, 0, 0.1);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Стили для модального окна */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            border: 1px solid var(--accent);
+            box-shadow: 0 0 30px rgba(139, 0, 0, 0.5);
+            position: relative;
+            animation: modalFadeIn 0.5s;
+        }
+        
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .modal-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--accent);
+        }
+        
+        .modal-text {
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        
+        .modal-button {
+            background: linear-gradient(to bottom, var(--accent), var(--accent-dark));
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: block;
+            margin: 0 auto;
+        }
+        
+        .modal-button:hover {
+            background: linear-gradient(to bottom, var(--accent-dark), var(--accent));
+            transform: translateY(-2px);
+        }
+        
+        /* Стили для прогресс-бара упадка */
+        .collapse-container {
+            margin: 30px 0 20px;
+        }
+        
+        .collapse-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+        }
+        
+        .collapse-bar {
+            height: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .white-theme .collapse-bar {
+            background: rgba(0, 0, 0, 0.1);
+        }
+        
+        .collapse-progress {
+            height: 100%;
+            background: linear-gradient(to right, var(--accent), var(--highlight));
+            width: 0%;
+            transition: width 0.5s;
+        }
+        
+        .collapse-warning {
+            position: absolute;
+            right: 0;
+            top: 0;
+            height: 100%;
+            width: 2px;
+            background: white;
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 1; }
+        }
+        
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            
+            .main-clicker {
+                margin: 20px 0;
+            }
+            
+            .clicker-btn {
+                width: 150px;
+                height: 150px;
+                font-size: 18px;
+            }
+        }
+        
+        /* Победа */
+        .victory-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 2s ease;
+        }
+        
+        .victory-screen.show {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .victory-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 3rem;
+            color: #8b0000;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .victory-text {
+            font-size: 1.2rem;
+            color: #333;
+            max-width: 600px;
+            text-align: center;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        
+        .victory-button {
+            background: linear-gradient(to bottom, #8b0000, #5a0000);
+            border: none;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+        }
+        
+        .victory-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="parallax-bg">
+        <div class="parallax-layer layer-1"></div>
+        <div class="parallax-layer layer-2"></div>
+    </div>
+    
+    <div class="container">
+        <header>
+            <h1 class="flicker">BLACKOUT</h1>
+            <div class="cps">Прослушиваний/сек: <span id="cpsValue">0</span></div>
+        </header>
+        
+        <main class="stats">
+            <div class="cookie-count" id="cookieCount">0 прослушиваний</div>
+            
+            <div class="main-clicker">
+                <button class="clicker-btn pulse" id="clicker">
+                    <span id="clickPower">1</span> прослушивание
+                </button>
+            </div>
+            
+            <div class="collapse-container">
+                <div class="collapse-label">
+                    <span>Уровень краха</span>
+                    <span id="collapseLevel">0%</span>
+                </div>
+                <div class="collapse-bar">
+                    <div class="collapse-progress" id="collapseProgress"></div>
+                    <div class="collapse-warning" id="collapseWarning" style="display: none;"></div>
+                </div>
+            </div>
+            
+            <div class="tab-container">
+                <button class="tab active" data-tab="producers">Студия</button>
+                <button class="tab" data-tab="upgrades">Апгрейды</button>
+                <button class="tab" data-tab="achievements">Крах</button>
+            </div>
+            
+            <div class="section active" id="producers-section">
+                <div class="producers" id="producersContainer">
+                    <!-- Производители будут добавлены через JS -->
+                </div>
+            </div>
+            
+            <div class="section" id="upgrades-section">
+                <div class="upgrades-section" id="upgradesContainer">
+                    <!-- Улучшения будут добавлены через JS -->
+                </div>
+            </div>
+            
+            <div class="section" id="achievements-section">
+                <div class="upgrades-section" id="achievementsContainer">
+                    <!-- Достижения будут добавлены через JS -->
+                </div>
+            </div>
+        </main>
+        
+        <aside class="upgrades-section">
+            <h3>Статистика</h3>
+            <div class="stat-item">
+                <span class="stat-label">Всего прослушиваний:</span> 
+                <span class="stat-value" id="totalCookies">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Кликов:</span> 
+                <span class="stat-value" id="totalClicks">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Время упадка:</span> 
+                <span class="stat-value" id="playTime">00:00:00</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Апгрейдов:</span> 
+                <span class="stat-value" id="upgradesBought">0/8</span>
+            </div>
+            
+            <h3 style="margin-top: 25px;">Хроника краха</h3>
+            <div id="eventLog">
+                <div class="event">Начало конца...</div>
+            </div>
+        </aside>
+    </div>
+
+    <div class="modal" id="achievementModal">
+        <div class="modal-content">
+            <h2 class="modal-title">ДОСТИЖЕНИЕ</h2>
+            <div class="modal-text" id="achievementModalText"></div>
+            <button class="modal-button" id="achievementModalButton">Понятно</button>
+        </div>
+    </div>
+
+    <div class="modal" id="collapseModal">
+        <div class="modal-content">
+            <h2 class="modal-title corruption">КРИТИЧЕСКИЙ УРОВЕНЬ КРАХА</h2>
+            <div class="modal-text" id="collapseModalText"></div>
+            <button class="modal-button" id="collapseModalButton">Принять судьбу</button>
+        </div>
+    </div>
+    
+    <div class="victory-screen" id="victoryScreen">
+        <h1 class="victory-title">ПОБЕДА?</h1>
+        <p class="victory-text">
+            Ты достиг вершины, но что это изменило?<br>
+            Soundcloud мертв, твоя музыка забыта, а ты остался один на один с пустотой.<br>
+            Поздравляю, ты выиграл. Или проиграл?
+        </p>
+        <button class="victory-button" id="victoryButton">Начать заново</button>
+    </div>
+
+    <script>
+        // Глубокая и мрачная игровая механика
+        class BlackoutGame {
+            constructor() {
+                this.cookies = 0;
+                this.totalCookies = 0;
+                this.cookiesPerSecond = 0;
+                this.clickPower = 1;
+                this.totalClicks = 0;
+                this.playTime = 0;
+                this.collapseLevel = 0;
+                this.collapseThreshold = 100;
+                this.baseCollapseSpeed = 0.1;
+                this.currentCollapseSpeed = 0.1;
+                this.inactivityTimer = 0;
+                this.inactivityThreshold = 15;
+                this.eventLog = ['Начало конца...'];
+                this.achievementsUnlocked = 0;
+                this.upgradesBought = 0;
+                this.totalUpgrades = 8;
+                this.lastUpdateTime = Date.now();
+                this.lastClickTime = Date.now();
+                this.gameEnded = false;
+                
+                // Инициализация всех игровых объектов
+                this.initProducers();
+                this.initUpgrades();
+                this.initAchievements();
+                
+                // Загрузка сохранения
+                this.loadGame();
+                
+                // Настройка интервалов
+                setInterval(() => this.update(), 1000);
+                setInterval(() => this.updateCollapse(), 100);
+                setInterval(() => this.saveGame(), 30000);
+                setInterval(() => this.checkInactivity(), 1000);
+                
+                // Начальное обновление интерфейса
+                this.updateUI();
+            }
+            
+            initProducers() {
+                this.producers = [
+                    { 
+                        id: 'demo', 
+                        name: 'Демо-запись', 
+                        description: 'Низкокачественный трек, записанный на телефон. Никому не интересно.',
+                        basePrice: 15, 
+                        baseCps: 0.1, 
+                        owned: 0,
+                        unlocked: true,
+                        corruptionEffect: 0.2
+                    },
+                    { 
+                        id: 'single', 
+                        name: 'Сингл', 
+                        description: 'Первый официальный релиз. 3 прослушивания - твоя мама и два ботах.',
+                        basePrice: 100, 
+                        baseCps: 0.5, 
+                        owned: 0,
+                        unlocked: false,
+                        corruptionEffect: 0.5
+                    },
+                    { 
+                        id: 'ep', 
+                        name: 'Мини-альбом', 
+                        description: 'Несколько треков, первое разочарование. Ты уже начинаешь сомневаться.',
+                        basePrice: 500, 
+                        baseCps: 2, 
+                        owned: 0,
+                        unlocked: false,
+                        corruptionEffect: 1
+                    },
+                    { 
+                        id: 'album', 
+                        name: 'Альбом', 
+                        description: 'Полноценная работа, которую никто не оценил. Время плакать в подушку.',
+                        basePrice: 3000, 
+                        baseCps: 10, 
+                        owned: 0,
+                        unlocked: false,
+                        corruptionEffect: 2
+                    },
+                    { 
+                        id: 'collab', 
+                        name: 'Коллаб', 
+                        description: 'Сотрудничество с более успешным артистом. Он даже не ответил тебе.',
+                        basePrice: 10000, 
+                        baseCps: 40, 
+                        owned: 0,
+                        unlocked: false,
+                        corruptionEffect: 3
+                    },
+                    { 
+                        id: 'viral', 
+                        name: 'Вирусный хит', 
+                        description: 'Минутная слава и последующее забвение. Ты уже не помнишь, зачем это все.',
+                        basePrice: 40000, 
+                        baseCps: 100, 
+                        owned: 0,
+                        unlocked: false,
+                        corruptionEffect: 5
+                    },
+                    { 
+                        id: 'label', 
+                        name: 'Контракт с лейблом', 
+                        description: 'Продажа души за мнимый успех. Они украли твою музыку и выбросили тебя.',
+                        basePrice: 200000, 
+                        baseCps: 400, 
+                        owned: 0,
+                        unlocked: false,
+                        corruptionEffect: 8
+                    },
+                    { 
+                        id: 'fame', 
+                        name: 'Мировая слава', 
+                        description: 'Пустота за маской популярности. Ты ненавидишь себя и свою музыку.',
+                        basePrice: 1666666, 
+                        baseCps: 6666, 
+                        owned: 0,
+                        unlocked: false,
+                        corruptionEffect: 15
+                    }
+                ];
+            }
+            
+            initUpgrades() {
+                this.upgrades = [
+                    { 
+                        id: 'quality', 
+                        name: 'Качественный звук', 
+                        description: '+0.2 к кликам. Первая попытка что-то изменить. Бесполезно.',
+                        price: 100, 
+                        effect: () => { 
+                            this.clickPower += 0.2;
+                            this.collapseLevel = Math.max(0, this.collapseLevel - 5);
+                        }, 
+                        purchased: false, 
+                        unlocked: true,
+                        corruptionEffect: 0.5
+                    },
+                    { 
+                        id: 'mastering', 
+                        name: 'Мастеринг', 
+                        description: '+0.5 к кликам. Профессиональная обработка, но душа все равно пуста.',
+                        price: 500, 
+                        effect: () => { 
+                            this.clickPower += 0.5;
+                            this.collapseLevel = Math.max(0, this.collapseLevel - 10);
+                        }, 
+                        purchased: false, 
+                        unlocked: true,
+                        corruptionEffect: 1
+                    },
+                    { 
+                        id: 'promo', 
+                        name: 'Продвижение', 
+                        description: 'Демо-записи x2. Первые фальшивые восторги. Ты знаешь, что это ложь.',
+                        price: 1000, 
+                        effect: () => { 
+                            this.getProducer('demo').baseCps *= 2;
+                            this.collapseLevel = Math.max(0, this.collapseLevel - 15);
+                        }, 
+                        purchased: false, 
+                        unlocked: true,
+                        corruptionEffect: 1.5
+                    },
+                    { 
+                        id: 'network', 
+                        name: 'Нетворкинг', 
+                        description: 'Синглы x2. Знакомства ради выгоды. Ты стал тем, кого презирал.',
+                        price: 5000, 
+                        effect: () => { 
+                            this.getProducer('single').baseCps *= 2;
+                            this.collapseLevel = Math.max(0, this.collapseLevel - 20);
+                        }, 
+                        purchased: false, 
+                        unlocked: false,
+                        corruptionEffect: 2
+                    },
+                    { 
+                        id: 'fame_up', 
+                        name: 'Известность', 
+                        description: 'Мини-альбомы x2. Первые признаки зависимости от внимания. Это никогда не заполнит пустоту.',
+                        price: 20000, 
+                        effect: () => { 
+                            this.getProducer('ep').baseCps *= 2;
+                            this.collapseLevel = Math.max(0, this.collapseLevel - 25);
+                        }, 
+                        purchased: false, 
+                        unlocked: false,
+                        corruptionEffect: 3
+                    },
+                    { 
+                        id: 'critics', 
+                        name: 'Хайп', 
+                        description: 'Альбомы x2. Критики хвалят, но внутри только пустота. Ты больше не чувствуешь музыку.',
+                        price: 100000, 
+                        effect: () => { 
+                            this.getProducer('album').baseCps *= 2;
+                            this.collapseLevel = Math.max(0, this.collapseLevel - 30);
+                        }, 
+                        purchased: false, 
+                        unlocked: false,
+                        corruptionEffect: 5
+                    },
+                    { 
+                        id: 'sellout', 
+                        name: 'Продажность', 
+                        description: 'Все x1.5. Полная утрата оригинальности. Ты стал продуктом.',
+                        price: 500000, 
+                        effect: () => { 
+                            this.producers.forEach(p => p.baseCps *= 1.5);
+                            this.collapseLevel = Math.max(0, this.collapseLevel - 40);
+                        }, 
+                        purchased: false, 
+                        unlocked: false,
+                        corruptionEffect: 10
+                    },
+                    { 
+                        id: 'empty', 
+                        name: 'Пустота', 
+                        description: 'Клики x3. Когда творчество больше не приносит радости. Это конец.',
+                        price: 2000000, 
+                        effect: () => { 
+                            this.clickPower *= 3;
+                            this.collapseLevel = Math.max(0, this.collapseLevel - 50);
+                            this.victory();
+                        }, 
+                        purchased: false, 
+                        unlocked: false,
+                        corruptionEffect: 15
+                    }
+                ];
+            }
+            
+            initAchievements() {
+                this.achievements = [
+                    { 
+                        id: 'first_100', 
+                        name: 'Первая сотня', 
+                        description: '100 прослушиваний', 
+                        reward: '+1 к кликам. Первые лайки, первая надежда. Она скоро умрет.', 
+                        condition: () => this.totalCookies >= 100, 
+                        unlocked: false, 
+                        effect: () => { 
+                            this.clickPower += 1;
+                            this.collapseLevel = Math.max(0, this.collapseLevel - 5);
+                        },
+                        collapseEffect: 5
+                    },
+                    { 
+                        id: 'viral', 
+                        name: 'Вирус', 
+                        description: '10,000 прослушиваний', 
+                        reward: 'Все x1.5. Мимолетная популярность, которая ничего не значит.', 
+                        condition: () => this.totalCookies >= 10000, 
+                        unlocked: false, 
+                        effect: () => { 
+                            this.producers.forEach(p => p.baseCps *= 1.5);
+                            this.collapseLevel = Math.max(0, this.collapseLevel - 10);
+                        },
+                        collapseEffect: 10
+                    },
+                    { 
+                        id: 'sellout', 
+                        name: 'Продажность', 
+                        description: '1,000,000 прослушиваний', 
+                        reward: 'Все x2. Ты стал частью системы.', 
+                        condition: () => this.totalCookies >= 1000000, 
+                        unlocked: false, 
+                        effect: () => { 
+                            this.producers.forEach(p => p.baseCps *= 2);
+                            this.collapseLevel = Math.max(0, this.collapseLevel - 20);
+                        },
+                        collapseEffect: 20
+                    },
+                    { 
+                        id: 'empty', 
+                        name: 'Пустота', 
+                        description: '10,000,000 прослушиваний', 
+                        reward: 'Клики x3. Ты достиг вершины, но там никого нет.', 
+                        condition: () => this.totalCookies >= 10000000, 
+                        unlocked: false, 
+                        effect: () => { 
+                            this.clickPower *= 3;
+                            this.collapseLevel = Math.max(0, this.collapseLevel - 30);
+                        },
+                        collapseEffect: 30
+                    },
+                    { 
+                        id: 'collapse', 
+                        name: 'Крах', 
+                        description: 'Достигнуть 100% уровня краха', 
+                        reward: 'Вечная пустота. Ты закончил.', 
+                        condition: () => this.collapseLevel >= 100, 
+                        unlocked: false, 
+                        effect: () => { this.resetGame() },
+                        collapseEffect: 0
+                    }
+                ];
+            }
+            
+            getProducer(id) {
+                return this.producers.find(p => p.id === id);
+            }
+            
+            getUpgrade(id) {
+                return this.upgrades.find(u => u.id === id);
+            }
+            
+            getAchievement(id) {
+                return this.achievements.find(a => a.id === id);
+            }
+            
+            calculateProducerPrice(producer) {
+                return Math.floor(producer.basePrice * Math.pow(1.15, producer.owned));
+            }
+            
+            calculateCPS() {
+                let cps = 0;
+                this.producers.forEach(producer => {
+                    cps += producer.owned * producer.baseCps;
+                });
+                this.cookiesPerSecond = cps;
+                return cps;
+            }
+            
+            addCookies(amount) {
+                this.cookies += amount;
+                this.totalCookies += amount;
+                this.updateUI();
+            }
+            
+            click() {
+                this.addCookies(this.clickPower);
+                this.totalClicks++;
+                this.lastClickTime = Date.now();
+                this.inactivityTimer = 0;
+                
+                // Уменьшение уровня краха при клике
+                this.collapseLevel = Math.max(0, this.collapseLevel - 0.5);
+                this.updateCollapseUI();
+                
+                // Проверка разблокировки
+                this.checkUnlocks();
+            }
+            
+            buyProducer(producerId) {
+                const producer = this.getProducer(producerId);
+                const price = this.calculateProducerPrice(producer);
+                
+                if (this.cookies >= price) {
+                    this.cookies -= price;
+                    producer.owned++;
+                    
+                    // Уменьшение уровня краха при покупке
+                    this.collapseLevel = Math.max(0, this.collapseLevel - producer.corruptionEffect);
+                    this.updateCollapseUI();
+                    
+                    // Добавление события в лог
+                    this.addEvent(`Выпущен ${producer.name.toLowerCase()}. ${this.getRandomDepressingComment()}`);
+                    
+                    this.updateUI();
+                    this.checkUnlocks();
+                    return true;
+                }
+                return false;
+            }
+            
+            buyUpgrade(upgradeId) {
+                const upgrade = this.getUpgrade(upgradeId);
+                
+                if (this.cookies >= upgrade.price && !upgrade.purchased) {
+                    this.cookies -= upgrade.price;
+                    upgrade.effect();
+                    upgrade.purchased = true;
+                    this.upgradesBought++;
+                    
+                    // Добавление события в лог
+                    this.addEvent(`Приобретено: ${upgrade.name}. ${this.getRandomDepressingComment()}`);
+                    
+                    this.updateUI();
+                    this.checkUnlocks();
+                    return true;
+                }
+                return false;
+            }
+            
+            getRandomDepressingComment() {
+                const comments = [
+                    "Ничего не изменилось.",
+                    "Ты все еще одинок.",
+                    "Это не сделало тебя счастливее.",
+                    "Пустота внутри только растет.",
+                    "Зачем ты это делаешь?",
+                    "Ты теряешь себя.",
+                    "Это того не стоило.",
+                    "Ты продал душу за цифры.",
+                    "Музыка больше не приносит радости.",
+                    "Ты стал частью системы.",
+                    "Искусство мертво.",
+                    "Ты просто очередной винтик.",
+                    "Никто не оценит твои старания.",
+                    "Это бессмысленно.",
+                    "Ты забыл, зачем начал."
+                ];
+                
+                return comments[Math.floor(Math.random() * comments.length)];
+            }
+            
+            checkUnlocks() {
+                // Разблокировка продюсеров
+                this.producers.forEach(producer => {
+                    if (!producer.unlocked) {
+                        if (this.totalCookies >= producer.basePrice / 2) {
+                            producer.unlocked = true;
+                            this.addEvent(`Доступен новый релиз: ${producer.name}. ${this.getRandomDepressingComment()}`);
+                        }
+                    }
+                });
+                
+                // Разблокировка улучшений
+                this.upgrades.forEach(upgrade => {
+                    if (!upgrade.unlocked && !upgrade.purchased) {
+                        if (this.totalCookies >= upgrade.price / 2) {
+                            upgrade.unlocked = true;
+                            this.addEvent(`Доступно улучшение: ${upgrade.name}. ${this.getRandomDepressingComment()}`);
+                        }
+                    }
+                });
+                
+                // Проверка достижений
+                this.achievements.forEach(achievement => {
+                    if (!achievement.unlocked && achievement.condition()) {
+                        achievement.unlocked = true;
+                        achievement.effect();
+                        this.achievementsUnlocked++;
+                        this.showAchievement(achievement);
+                        this.addEvent(`Достижение: ${achievement.name}. ${this.getRandomDepressingComment()}`);
+                    }
+                });
+            }
+            
+            update() {
+                const now = Date.now();
+                const deltaTime = (now - this.lastUpdateTime) / 1000;
+                this.lastUpdateTime = now;
+                
+                // Добавление печенек за время
+                const cookiesToAdd = this.calculateCPS() * deltaTime;
+                if (cookiesToAdd > 0) {
+                    this.addCookies(cookiesToAdd);
+                }
+                
+                // Обновление игрового времени
+                this.playTime += deltaTime;
+                this.updateTimeUI();
+            }
+            
+            checkInactivity() {
+                const now = Date.now();
+                const inactiveSeconds = (now - this.lastClickTime) / 1000;
+                
+                if (inactiveSeconds > this.inactivityThreshold) {
+                    this.inactivityTimer = Math.min(inactiveSeconds - this.inactivityThreshold, 60);
+                    this.currentCollapseSpeed = this.baseCollapseSpeed * (1 + this.inactivityTimer / 10);
+                    
+                    if (this.inactivityTimer > 30 && Math.random() < 0.1) {
+                        this.addEvent("Ты давно не был активен. Пустота заполняет тебя...");
+                    }
+                } else {
+                    this.currentCollapseSpeed = this.baseCollapseSpeed;
+                }
+            }
+            
+            updateCollapse() {
+                // Постепенное увеличение уровня краха
+                if (this.collapseLevel < this.collapseThreshold) {
+                    this.collapseLevel += this.currentCollapseSpeed * (1 + this.cookiesPerSecond / 1000);
+                    this.updateCollapseUI();
+                }
+                
+                // Проверка на критический уровень краха
+                if (this.collapseLevel >= this.collapseThreshold && !this.getAchievement('collapse').unlocked) {
+                    this.showCollapseWarning();
+                }
+            }
+            
+            gameOver() {
+                this.addEvent("Конец. Все кончено. Ты проиграл.", true);
+                this.gameEnded = true;
+                // Здесь можно добавить дополнительные эффекты окончания игры
+            }
+            
+            victory() {
+                this.gameEnded = true;
+                document.body.classList.add('white-theme');
+                document.getElementById('victoryScreen').classList.add('show');
+            }
+            
+            addEvent(text, isImportant = false) {
+                const eventElement = document.createElement('div');
+                eventElement.className = 'event';
+                if (isImportant) {
+                    eventElement.style.color = 'var(--corruption)';
+                    eventElement.style.fontWeight = 'bold';
+                }
+                eventElement.textContent = text;
+                
+                const eventLog = document.getElementById('eventLog');
+                eventLog.insertBefore(eventElement, eventLog.firstChild);
+                
+                // Ограничение количества событий в логе
+                if (eventLog.children.length > 20) {
+                    eventLog.removeChild(eventLog.lastChild);
+                }
+                
+                // Сохранение события в историю
+                this.eventLog.unshift(text);
+            }
+            
+            showAchievement(achievement) {
+                const modal = document.getElementById('achievementModal');
+                const textElement = document.getElementById('achievementModalText');
+                const button = document.getElementById('achievementModalButton');
+                
+                textElement.innerHTML = `
+                    <div style="font-size: 1.2rem; margin-bottom: 10px; color: var(--accent);">${achievement.name}</div>
+                    <div style="margin-bottom: 10px;">${achievement.description}</div>
+                    <div style="font-style: italic; color: var(--accent);">${achievement.reward}</div>
+                `;
+                
+                modal.style.display = 'flex';
+                
+                button.onclick = () => {
+                    modal.style.display = 'none';
+                };
+            }
+            
+            showCollapseWarning() {
+                const modal = document.getElementById('collapseModal');
+                const textElement = document.getElementById('collapseModalText');
+                const button = document.getElementById('collapseModalButton');
+                
+                const messages = [
+                    "Ты потерял себя в погоне за цифрами.",
+                    "Творчество больше не приносит радости, только пустоту.",
+                    "Ты стал тем, кого всегда презирал.",
+                    "Слава оказалась иллюзией, но уже слишком поздно.",
+                    "Ты достиг вершины, но там никого нет."
+                ];
+                
+                const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+                
+                textElement.innerHTML = `
+                    <div style="margin-bottom: 15px;">${randomMessage}</div>
+                    <div style="text-align: center; font-size: 1.5rem; color: var(--corruption); margin: 15px 0;">УРОВЕНЬ КРАХА: 100%</div>
+                    <div>Продолжить путь в пустоту?</div>
+                `;
+                
+                modal.style.display = 'flex';
+                
+                button.onclick = () => {
+                    modal.style.display = 'none';
+                    this.getAchievement('collapse').effect();
+                };
+            }
+            
+            updateUI() {
+                // Обновление счетчиков
+                document.getElementById('cookieCount').textContent = `${this.formatNumber(this.cookies)} прослушиваний`;
+                document.getElementById('totalCookies').textContent = this.formatNumber(this.totalCookies);
+                document.getElementById('cpsValue').textContent = this.formatNumber(this.calculateCPS(), true);
+                document.getElementById('clickPower').textContent = this.formatNumber(this.clickPower, true);
+                document.getElementById('totalClicks').textContent = this.formatNumber(this.totalClicks);
+                document.getElementById('upgradesBought').textContent = `${this.upgradesBought}/${this.totalUpgrades}`;
+                
+                // Обновление списка продюсеров
+                const producersContainer = document.getElementById('producersContainer');
+                producersContainer.innerHTML = '';
+                
+                this.producers.forEach(producer => {
+                    const producerElement = document.createElement('div');
+                    producerElement.className = `producer ${producer.unlocked ? 'unlocked' : 'locked'}`;
+                    
+                    const price = this.calculateProducerPrice(producer);
+                    const canAfford = this.cookies >= price;
+                    
+                    producerElement.innerHTML = `
+                        <div class="producer-name">
+                            <span>${producer.name}</span>
+                            <span class="producer-count">${producer.owned}</span>
+                        </div>
+                        <div class="producer-description">${producer.description}</div>
+                        <div class="producer-price">
+                            <span>${this.formatNumber(price)} прослушиваний</span>
+                            <button class="producer-button" ${!canAfford || !producer.unlocked ? 'disabled' : ''}>
+                                Купить
+                            </button>
+                        </div>
+                    `;
+                    
+                    const button = producerElement.querySelector('button');
+                    if (button) {
+                        button.addEventListener('click', () => {
+                            if (this.buyProducer(producer.id)) {
+                                this.updateUI();
+                            }
+                        });
+                    }
+                    
+                    producersContainer.appendChild(producerElement);
+                });
+                
+                // Обновление списка улучшений
+                const upgradesContainer = document.getElementById('upgradesContainer');
+                upgradesContainer.innerHTML = '';
+                
+                this.upgrades.forEach(upgrade => {
+                    const upgradeElement = document.createElement('div');
+                    upgradeElement.className = `upgrade ${upgrade.unlocked ? 'unlocked' : 'locked'}`;
+                    
+                    const canAfford = this.cookies >= upgrade.price && !upgrade.purchased;
+                    
+                    upgradeElement.innerHTML = `
+                        <div class="upgrade-name">
+                            <span>${upgrade.name}</span>
+                            <span>${upgrade.purchased ? 'Куплено' : ''}</span>
+                        </div>
+                        <div class="upgrade-description">${upgrade.description}</div>
+                        <div class="upgrade-price">
+                            <span>${upgrade.purchased ? '' : `${this.formatNumber(upgrade.price)} прослушиваний`}</span>
+                            <button class="upgrade-button" ${!canAfford || upgrade.purchased ? 'disabled' : ''}>
+                                ${upgrade.purchased ? 'Приобретено' : 'Купить'}
+                            </button>
+                        </div>
+                    `;
+                    
+                    const button = upgradeElement.querySelector('button');
+                    if (button) {
+                        button.addEventListener('click', () => {
+                            if (this.buyUpgrade(upgrade.id)) {
+                                this.updateUI();
+                            }
+                        });
+                    }
+                    
+                    upgradesContainer.appendChild(upgradeElement);
+                });
+                
+                // Обновление списка достижений
+                const achievementsContainer = document.getElementById('achievementsContainer');
+                achievementsContainer.innerHTML = '';
+                
+                this.achievements.forEach(achievement => {
+                    const achievementElement = document.createElement('div');
+                    achievementElement.className = `achievement ${achievement.unlocked ? 'unlocked' : 'locked'}`;
+                    
+                    achievementElement.innerHTML = `
+                        <div class="achievement-name">
+                            <span class="${achievement.unlocked ? 'unlocked' : 'locked'}">
+                                ${achievement.name}
+                            </span>
+                        </div>
+                        <div class="achievement-description">${achievement.description}</div>
+                        ${achievement.unlocked ? 
+                            `<div class="achievement-reward">${achievement.reward}</div>` : 
+                            '<div class="achievement-reward">Заблокировано</div>'}
+                    `;
+                    
+                    achievementsContainer.appendChild(achievementElement);
+                });
+            }
+            
+            updateTimeUI() {
+                const hours = Math.floor(this.playTime / 3600);
+                const minutes = Math.floor((this.playTime % 3600) / 60);
+                const seconds = Math.floor(this.playTime % 60);
+                
+                document.getElementById('playTime').textContent = 
+                    `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }
+            
+            updateCollapseUI() {
+                const progress = Math.min(this.collapseLevel, 100);
+                document.getElementById('collapseProgress').style.width = `${progress}%`;
+                document.getElementById('collapseLevel').textContent = `${Math.floor(progress)}%`;
+                
+                // Показать/скрыть предупреждение
+                const warningElement = document.getElementById('collapseWarning');
+                if (progress > 70) {
+                    warningElement.style.display = 'block';
+                } else {
+                    warningElement.style.display = 'none';
+                }
+                
+                // Изменение цвета прогресс-бара в зависимости от уровня
+                const progressBar = document.getElementById('collapseProgress');
+                if (progress < 30) {
+                    progressBar.style.background = 'linear-gradient(to right, var(--accent), var(--highlight))';
+                } else if (progress < 70) {
+                    progressBar.style.background = 'linear-gradient(to right, #8b4500, #8b0000)';
+                } else {
+                    progressBar.style.background = 'linear-gradient(to right, #8b0000, #5a0000)';
+                }
+            }
+            
+            formatNumber(num, isDecimal = false) {
+                if (isDecimal) {
+                    if (num < 10) {
+                        return num.toFixed(1);
+                    } else {
+                        return Math.floor(num);
+                    }
+                }
+                
+                if (num >= 1000000) {
+                    return (num / 1000000).toFixed(1) + 'M';
+                } else if (num >= 1000) {
+                    return (num / 1000).toFixed(1) + 'K';
+                } else {
+                    return Math.floor(num);
+                }
+            }
+            
+            saveGame() {
+                if (this.gameEnded) return;
+                
+                const saveData = {
+                    cookies: this.cookies,
+                    totalCookies: this.totalCookies,
+                    clickPower: this.clickPower,
+                    totalClicks: this.totalClicks,
+                    playTime: this.playTime,
+                    collapseLevel: this.collapseLevel,
+                    producers: this.producers,
+                    upgrades: this.upgrades,
+                    achievements: this.achievements,
+                    eventLog: this.eventLog,
+                    achievementsUnlocked: this.achievementsUnlocked,
+                    upgradesBought: this.upgradesBought,
+                    version: 1
+                };
+                
+                localStorage.setItem('blackoutSave', JSON.stringify(saveData));
+                this.addEvent('Прогресс сохранен.');
+            }
+            
+            loadGame() {
+                const saveData = JSON.parse(localStorage.getItem('blackoutSave'));
+                
+                if (saveData) {
+                    this.cookies = saveData.cookies || 0;
+                    this.totalCookies = saveData.totalCookies || 0;
+                    this.clickPower = saveData.clickPower || 1;
+                    this.totalClicks = saveData.totalClicks || 0;
+                    this.playTime = saveData.playTime || 0;
+                    this.collapseLevel = saveData.collapseLevel || 0;
+                    this.achievementsUnlocked = saveData.achievementsUnlocked || 0;
+                    this.upgradesBought = saveData.upgradesBought || 0;
+                    
+                    // Восстановление продюсеров
+                    if (saveData.producers) {
+                        this.producers.forEach(producer => {
+                            const savedProducer = saveData.producers.find(p => p.id === producer.id);
+                            if (savedProducer) {
+                                producer.owned = savedProducer.owned || 0;
+                                producer.unlocked = savedProducer.unlocked || false;
+                            }
+                        });
+                    }
+                    
+                    // Восстановление улучшений
+                    if (saveData.upgrades) {
+                        this.upgrades.forEach(upgrade => {
+                            const savedUpgrade = saveData.upgrades.find(u => u.id === upgrade.id);
+                            if (savedUpgrade) {
+                                upgrade.purchased = savedUpgrade.purchased || false;
+                                upgrade.unlocked = savedUpgrade.unlocked || false;
+                            }
+                        });
+                    }
+                    
+                    // Восстановление достижений
+                    if (saveData.achievements) {
+                        this.achievements.forEach(achievement => {
+                            const savedAchievement = saveData.achievements.find(a => a.id === achievement.id);
+                            if (savedAchievement) {
+                                achievement.unlocked = savedAchievement.unlocked || false;
+                            }
+                        });
+                    }
+                    
+                    // Восстановление лога событий
+                    if (saveData.eventLog) {
+                        this.eventLog = saveData.eventLog;
+                        const eventLogElement = document.getElementById('eventLog');
+                        eventLogElement.innerHTML = '';
+                        
+                        // Отображаем последние 5 событий
+                        const recentEvents = saveData.eventLog.slice(0, 5);
+                        recentEvents.forEach(event => {
+                            const eventElement = document.createElement('div');
+                            eventElement.className = 'event';
+                            eventElement.textContent = event;
+                            eventLogElement.appendChild(eventElement);
+                        });
+                    }
+                    
+                    this.addEvent('Прогресс загружен.');
+                    this.updateUI();
+                    
+                    // Проверка на победу
+                    if (this.getUpgrade('empty').purchased) {
+                        this.victory();
+                    }
+                }
+            }
+            
+            resetGame() {
+                localStorage.removeItem('blackoutSave');
+                location.reload();
+            }
+        }
+
+        // Инициализация игры
+        const game = new BlackoutGame();
+
+        // Настройка обработчиков событий
+        document.getElementById('clicker').addEventListener('click', (e) => {
+            game.click();
+            
+            // Анимация клика
+            const clicker = document.getElementById('clicker');
+            clicker.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                clicker.style.transform = 'scale(1)';
+            }, 100);
+            
+            // Эффект частиц
+            createParticle(e);
+        });
+
+        // Переключение вкладок
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Удаляем активный класс у всех вкладок
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+                
+                // Добавляем активный класс к выбранной вкладке
+                tab.classList.add('active');
+                const tabId = tab.getAttribute('data-tab');
+                document.getElementById(`${tabId}-section`).classList.add('active');
+            });
+        });
+
+        // Параллакс-эффект
+        document.addEventListener('mousemove', (e) => {
+            const x = e.clientX / window.innerWidth;
+            const y = e.clientY / window.innerHeight;
+            
+            document.querySelector('.layer-1').style.transform = 
+                `translateZ(-300px) scale(4) translate(${x * 50}px, ${y * 50}px)`;
+            document.querySelector('.layer-2').style.transform = 
+                `translateZ(-200px) scale(3) translate(${x * -30}px, ${y * -30}px)`;
+        });
+
+        // Функция для создания частиц при клике
+        function createParticle(event) {
+            const particle = document.createElement('div');
+            particle.style.position = 'absolute';
+            particle.style.width = '5px';
+            particle.style.height = '5px';
+            particle.style.backgroundColor = 'rgba(139, 0, 0, 0.7)';
+            particle.style.borderRadius = '50%';
+            particle.style.pointerEvents = 'none';
+            particle.style.left = `${event.clientX}px`;
+            particle.style.top = `${event.clientY}px`;
+            particle.style.zIndex = '100';
+            
+            document.body.appendChild(particle);
+            
+            const angle = Math.random() * Math.PI * 2;
+            const velocity = 2 + Math.random() * 3;
+            const xVelocity = Math.cos(angle) * velocity;
+            const yVelocity = Math.sin(angle) * velocity;
+            
+            let posX = event.clientX;
+            let posY = event.clientY;
+            let opacity = 1;
+            
+            const animate = () => {
+                posX += xVelocity;
+                posY += yVelocity;
+                opacity -= 0.03;
+                
+                particle.style.left = `${posX}px`;
+                particle.style.top = `${posY}px`;
+                particle.style.opacity = opacity;
+                
+                if (opacity > 0) {
+                    requestAnimationFrame(animate);
+                } else {
+                    particle.remove();
+                }
+            };
+            
+            requestAnimationFrame(animate);
+        }
+
+        // Кнопка победы
+        document.getElementById('victoryButton').addEventListener('click', () => {
+            game.resetGame();
+        });
+
+        // Кнопка модального окна краха
+        document.getElementById('collapseModalButton').addEventListener('click', () => {
+            game.resetGame();
+        });
+
+        // Добавление кнопки сброса в интерфейс (для тестирования)
+        const resetButton = document.createElement('button');
+        resetButton.textContent = 'Сброс';
+        resetButton.style.position = 'fixed';
+        resetButton.style.bottom = '10px';
+        resetButton.style.right = '10px';
+        resetButton.style.zIndex = '1000';
+        resetButton.style.padding = '5px 10px';
+        resetButton.style.background = 'var(--corruption)';
+        resetButton.style.color = 'white';
+        resetButton.style.border = 'none';
+        resetButton.style.borderRadius = '5px';
+        resetButton.style.cursor = 'pointer';
+        resetButton.addEventListener('click', () => game.resetGame());
+        document.body.appendChild(resetButton);
+    </script>
+</body>
+</html>
